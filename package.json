@@ -1,0 +1,26 @@
+{
+  "name": "DisplayBinanceFuturesBalance",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ThallyssonKlein/DisplayBinanceFuturesBalance.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ThallyssonKlein/DisplayBinanceFuturesBalance/issues"
+  },
+  "homepage": "https://github.com/ThallyssonKlein/DisplayBinanceFuturesBalance#readme",
+  "dependencies": {
+    "next": "^10.2.0",
+    "nextjs-websocket": "^1.0.2",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  }
+}
