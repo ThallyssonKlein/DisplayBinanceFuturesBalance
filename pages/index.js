@@ -1,17 +1,46 @@
-import { WebSocket } from 'nextjs-websocket';
-import { useState } from 'react';
+// import { WebSocket } from 'nextjs-websocket';
+import { useState, useEffect } from 'react';
+import { create } from 'apisauce';
+const crypto = require('crypto');
+import Grid from '@material-ui/core/Grid';
+import Asset from '../components/Asset';
 
 export default function Home(){
-    const [message, setMessage] = useState("");
-    
-    const handleData = data => {
-        setMessage(data);
-    }
+    const [array, setArray] = useState([]);
+    const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+    const API_SECRET = process.env.NEXT_PUBLIC_API_SECRET;
 
-    //TODO - install git flow
-    return <div>
-            {message}
-            <WebSocket url='wss://dex.binance.org/api/ws/bnb1m4m9etgf3ca5wpgkqe5nr6r33a4ynxfln3yz4v'
-                       onMessage={data => handleData(data, 1)}/>
+    const API = create({
+        baseURL: 'https://fapi.binance.com',
+        headers: {"X-MBX-APIKEY" : API_KEY }
+    })
+
+    const buildSign = timestamp => {
+        return crypto.createHmac('sha256', API_SECRET).update('timestamp=' + timestamp).digest('hex');
+    };
+
+    const request = async _ => {
+        const timestamp = new Date().getTime();
+        const signature = buildSign(timestamp);
+        const response = await API.get('/fapi/v2/balance?timestamp=' + timestamp + '&signature=' + signature);
+        setArray(response.data);
+    }
+    
+    useEffect(_ => {
+        request();
+        setInterval(_ => {
+            request();
+        }, 60000);
+    }, []);
+
+    return <div className="viewport">
+             {array.length > 0 && <Grid container
+                   direction="row"
+                   justify="center"
+                   alignItems="center">
+                         {array.map(asset => (
+                            <Asset asset={asset.asset} balance={asset.balance} availableBalance={asset.availableBalance}/>
+                        ))}
+            </Grid>}           
     </div>
 }
